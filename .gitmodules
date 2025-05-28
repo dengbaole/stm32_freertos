@@ -1,0 +1,3 @@
+[submodule "utils_bin"]
+	path = utils_bin
+	url = https://git.volwave.cc/VOLWAVE/utils_bin.git

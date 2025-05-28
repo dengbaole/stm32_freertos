@@ -1,0 +1,31 @@
+
+.vscode*
+
+config.ini
+config.json
+
+test*
+
+# for firmware
+bin
+Obj
+Listings
+Objects
+EventRecorderStub.scvd
+JLinkLog*
+JLinkSettings*
+*.uvguix*
+*.uvoptx
+settings.json
+*.lst
+Output
+_build
+*.o
+
+# for distribution
+dist
+compile_parameter.h
+assets.c
+assets.h
+
+assets/UI/icon/*.png
