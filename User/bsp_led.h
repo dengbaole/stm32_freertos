@@ -7,19 +7,19 @@
 
 /* ����LED���ӵ�GPIO�˿�, �û�ֻ��Ҫ�޸�����Ĵ��뼴�ɸı���Ƶ�LED���� */
 // R-��ɫ
-#define LED1_GPIO_PORT    	GPIOC			              /* GPIO�˿� */
-#define LED1_GPIO_CLK 	    RCC_APB2Periph_GPIOC		/* GPIO�˿�ʱ�� */
-#define LED1_GPIO_PIN		GPIO_Pin_0			        /* ���ӵ�SCLʱ���ߵ�GPIO */
+#define LEDB_GPIO_PORT    	GPIOC			              /* GPIO�˿� */
+#define LEDB_GPIO_CLK 	    RCC_APB2Periph_GPIOC		/* GPIO�˿�ʱ�� */
+#define LEDB_GPIO_PIN		GPIO_Pin_0			        /* ���ӵ�SCLʱ���ߵ�GPIO */
 
 // G-��ɫ
-#define LED2_GPIO_PORT    	GPIOC			              /* GPIO�˿� */
-#define LED2_GPIO_CLK 	    RCC_APB2Periph_GPIOC		/* GPIO�˿�ʱ�� */
-#define LED2_GPIO_PIN		GPIO_Pin_1			        /* ���ӵ�SCLʱ���ߵ�GPIO */
+#define LEDR_GPIO_PORT    	GPIOC			              /* GPIO�˿� */
+#define LEDR_GPIO_CLK 	    RCC_APB2Periph_GPIOC		/* GPIO�˿�ʱ�� */
+#define LEDR_GPIO_PIN		GPIO_Pin_1			        /* ���ӵ�SCLʱ���ߵ�GPIO */
 
 // B-��ɫ
-#define LED3_GPIO_PORT    	GPIOC			              /* GPIO�˿� */
-#define LED3_GPIO_CLK 	    RCC_APB2Periph_GPIOC		/* GPIO�˿�ʱ�� */
-#define LED3_GPIO_PIN		GPIO_Pin_2			        /* ���ӵ�SCLʱ���ߵ�GPIO */
+#define LEDG_GPIO_PORT    	GPIOC			              /* GPIO�˿� */
+#define LEDG_GPIO_CLK 	    RCC_APB2Periph_GPIOC		/* GPIO�˿�ʱ�� */
+#define LEDG_GPIO_PIN		GPIO_Pin_2			        /* ���ӵ�SCLʱ���ߵ�GPIO */
 
 
 /** the macro definition to trigger the led on or off
@@ -30,20 +30,20 @@
 #define OFF 1
 
 /* ʹ�ñ�׼�Ĺ̼������IO*/
-#define LED1(a)	if (a)	\
-		GPIO_SetBits(LED1_GPIO_PORT,LED1_GPIO_PIN);\
+#define LEDB(a)	if (a)	\
+		GPIO_SetBits(LEDB_GPIO_PORT,LEDB_GPIO_PIN);\
 	else		\
-		GPIO_ResetBits(LED1_GPIO_PORT,LED1_GPIO_PIN)
+		GPIO_ResetBits(LEDB_GPIO_PORT,LEDB_GPIO_PIN)
 
-#define LED2(a)	if (a)	\
-		GPIO_SetBits(LED2_GPIO_PORT,LED2_GPIO_PIN);\
+#define LEDR(a)	if (a)	\
+		GPIO_SetBits(LEDR_GPIO_PORT,LEDR_GPIO_PIN);\
 	else		\
-		GPIO_ResetBits(LED2_GPIO_PORT,LED2_GPIO_PIN)
+		GPIO_ResetBits(LEDR_GPIO_PORT,LEDR_GPIO_PIN)
 
-#define LED3(a)	if (a)	\
-		GPIO_SetBits(LED3_GPIO_PORT,LED3_GPIO_PIN);\
+#define LEDG(a)	if (a)	\
+		GPIO_SetBits(LEDG_GPIO_PORT,LEDG_GPIO_PIN);\
 	else		\
-		GPIO_ResetBits(LED3_GPIO_PORT,LED3_GPIO_PIN)
+		GPIO_ResetBits(LEDG_GPIO_PORT,LEDG_GPIO_PIN)
 
 
 /* ֱ�Ӳ����Ĵ����ķ�������IO */
@@ -53,67 +53,67 @@
 
 
 /* �������IO�ĺ� */
-#define LED1_TOGGLE		 digitalToggle(LED1_GPIO_PORT,LED1_GPIO_PIN)
-#define LED1_OFF		   digitalHi(LED1_GPIO_PORT,LED1_GPIO_PIN)
-#define LED1_ON			   digitalLo(LED1_GPIO_PORT,LED1_GPIO_PIN)
+#define LEDB_TOGGLE		 digitalToggle(LEDB_GPIO_PORT,LEDB_GPIO_PIN)
+#define LEDB_OFF		   digitalHi(LEDB_GPIO_PORT,LEDB_GPIO_PIN)
+#define LEDB_ON			   digitalLo(LEDB_GPIO_PORT,LEDB_GPIO_PIN)
 
-#define LED2_TOGGLE		 digitalToggle(LED2_GPIO_PORT,LED2_GPIO_PIN)
-#define LED2_OFF		   digitalHi(LED2_GPIO_PORT,LED2_GPIO_PIN)
-#define LED2_ON			   digitalLo(LED2_GPIO_PORT,LED2_GPIO_PIN)
+#define LEDR_TOGGLE		 digitalToggle(LEDR_GPIO_PORT,LEDR_GPIO_PIN)
+#define LEDR_OFF		   digitalHi(LEDR_GPIO_PORT,LEDR_GPIO_PIN)
+#define LEDR_ON			   digitalLo(LEDR_GPIO_PORT,LEDR_GPIO_PIN)
 
-#define LED3_TOGGLE		 digitalToggle(LED3_GPIO_PORT,LED3_GPIO_PIN)
-#define LED3_OFF		   digitalHi(LED3_GPIO_PORT,LED3_GPIO_PIN)
-#define LED3_ON			   digitalLo(LED3_GPIO_PORT,LED3_GPIO_PIN)
+#define LEDG_TOGGLE		 digitalToggle(LEDG_GPIO_PORT,LEDG_GPIO_PIN)
+#define LEDG_OFF		   digitalHi(LEDG_GPIO_PORT,LEDG_GPIO_PIN)
+#define LEDG_ON			   digitalLo(LEDG_GPIO_PORT,LEDG_GPIO_PIN)
 
 /* ������ɫ������߼��÷�ʹ��PWM�ɻ��ȫ����ɫ,��Ч������ */
 
 //��
 #define LED_RED  \
-	LED1_ON;\
-	LED2_OFF\
-	LED3_OFF
+	LEDB_ON;\
+	LEDR_OFF\
+	LEDG_OFF
 
 //��
 #define LED_GREEN		\
-	LED1_OFF;\
-	LED2_ON\
-	LED3_OFF
+	LEDB_OFF;\
+	LEDR_ON\
+	LEDG_OFF
 
 //��
 #define LED_BLUE	\
-	LED1_OFF;\
-	LED2_OFF\
-	LED3_ON
+	LEDB_OFF;\
+	LEDR_OFF\
+	LEDG_ON
 
 
 //��(��+��)
 #define LED_YELLOW	\
-	LED1_ON;\
-	LED2_ON\
-	LED3_OFF
+	LEDB_ON;\
+	LEDR_ON\
+	LEDG_OFF
 //��(��+��)
 #define LED_PURPLE	\
-	LED1_ON;\
-	LED2_OFF\
-	LED3_ON
+	LEDB_ON;\
+	LEDR_OFF\
+	LEDG_ON
 
 //��(��+��)
 #define LED_CYAN \
-	LED1_OFF;\
-	LED2_ON\
-	LED3_ON
+	LEDB_OFF;\
+	LEDR_ON\
+	LEDG_ON
 
 //��(��+��+��)
 #define LED_WHITE	\
-	LED1_ON;\
-	LED2_ON\
-	LED3_ON
+	LEDB_ON;\
+	LEDR_ON\
+	LEDG_ON
 
 //��(ȫ���ر�)
 #define LED_RGBOFF	\
-	LED1_OFF;\
-	LED2_OFF\
-	LED3_OFF
+	LEDB_OFF;\
+	LEDR_OFF\
+	LEDG_OFF
 
 void LED_GPIO_Config(void);
 

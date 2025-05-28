@@ -1,29 +1,6 @@
-/**
-  *********************************************************************
-  * @file    main.c
-  * @author  fire
-  * @version V1.0
-  * @date    2018-xx-xx
-  * @brief   FreeRTOS v9.0.0 + STM32 动态创建任务
-  *********************************************************************
-  * @attention
-  *
-  * 实验平台:野火 STM32全系列开发板
-  * 论坛    :http://www.firebbs.cn
-  * 淘宝    :https://fire-stm32.taobao.com
-  *
-  **********************************************************************
-  */
 
-/*
-*************************************************************************
-*                             包含的头文件
-*************************************************************************
-*/
-/* FreeRTOS头文件 */
 #include "FreeRTOS.h"
 #include "task.h"
-/* 开发板硬件bsp头文件 */
 #include "bsp_led.h"
 #include "bsp_usart.h"
 
@@ -81,14 +58,15 @@ int main(void) {
 
 	/* 开发板硬件初始化 */
 	BSP_Init();
-	printf("这是一个[野火]-STM32全系列开发板-FreeRTOS-动态创建任务!\r\n");
+	printf("动态创建任务!\r\n");
 	/* 创建AppTaskCreate任务 */
-	xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
-						  (const char*    )"AppTaskCreate",/* 任务名字 */
-						  (uint16_t       )512,  /* 任务栈大小 */
-						  (void*          )NULL,/* 任务入口函数参数 */
-						  (UBaseType_t    )1, /* 任务的优先级 */
-						  (TaskHandle_t*  )&AppTaskCreate_Handle);/* 任务控制块指针 */
+	// xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
+	// 					  (const char*    )"AppTaskCreate",/* 任务名字 */
+	// 					  (uint16_t       )512,  /* 任务栈大小 */
+	// 					  (void*          )NULL,/* 任务入口函数参数 */
+	// 					  (UBaseType_t    )1, /* 任务的优先级 */
+	// 					  (TaskHandle_t*  )&AppTaskCreate_Handle);/* 任务控制块指针 */
+	xReturn = xTaskCreate(AppTaskCreate, "AppTaskCreate", 512, NULL, 1, &AppTaskCreate_Handle);
 	/* 启动任务调度 */
 	if(pdPASS == xReturn)
 		vTaskStartScheduler();   /* 启动任务，开启调度 */
@@ -110,13 +88,14 @@ static void AppTaskCreate(void) {
 
 	taskENTER_CRITICAL();           //进入临界区
 
-	/* 创建LED_Task任务 */
-	xReturn = xTaskCreate((TaskFunction_t )LED_Task, /* 任务入口函数 */
-						  (const char*    )"LED_Task",/* 任务名字 */
-						  (uint16_t       )512,   /* 任务栈大小 */
-						  (void*          )NULL,	/* 任务入口函数参数 */
-						  (UBaseType_t    )2,	    /* 任务的优先级 */
-						  (TaskHandle_t*  )&LED_Task_Handle);/* 任务控制块指针 */
+	// /* 创建LED_Task任务 */
+	// xReturn = xTaskCreate((TaskFunction_t )LED_Task, /* 任务入口函数 */
+	// 					  (const char*    )"LED_Task",/* 任务名字 */
+	// 					  (uint16_t       )512,   /* 任务栈大小 */
+	// 					  (void*          )NULL,	/* 任务入口函数参数 */
+	// 					  (UBaseType_t    )2,	    /* 任务的优先级 */
+	// 					  (TaskHandle_t*  )&LED_Task_Handle);/* 任务控制块指针 */
+	xReturn = xTaskCreate(LED_Task, "LED_Task", 512, NULL, 2, &LED_Task_Handle);
 	if(pdPASS == xReturn)
 		printf("创建LED_Task任务成功!\r\n");
 
@@ -134,14 +113,25 @@ static void AppTaskCreate(void) {
   * @ 返回值  ： 无
   ********************************************************************/
 static void LED_Task(void* parameter) {
+	static uint8_t i = 0;
 	while (1) {
-		LED1_ON;
-		vTaskDelay(500);   /* 延时500个tick */
-		printf("LED_Task Running,LED1_ON\r\n");
+		i++;
+		if(i % 3 == 0) {
+			LEDB_ON;
+		} else if(i % 3 == 1) {
+			LEDR_ON;
+		} else {
+			LEDG_ON;
+		}
 
-		LED1_OFF;
 		vTaskDelay(500);   /* 延时500个tick */
-		printf("LED_Task Running,LED1_OFF\r\n");
+		printf("LED_Task Running,LEDB_ON\r\n");
+
+		LEDG_OFF;
+		LEDR_OFF;
+		LEDB_OFF;
+		vTaskDelay(500);   /* 延时500个tick */
+		printf("LED_Task Running,LEDB_OFF\r\n");
 	}
 }
 
@@ -158,11 +148,7 @@ static void BSP_Init(void) {
 	 * 都统一用这个优先级分组，千万不要再分组，切忌。
 	 */
 	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
-
-	/* LED 初始化 */
 	LED_GPIO_Config();
-
-	/* 串口初始化	*/
 	USART_Config();
 
 }
