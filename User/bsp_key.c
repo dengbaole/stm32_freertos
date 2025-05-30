@@ -3,7 +3,6 @@
 
 static uint8_t key_execution_countdown;
 static uint8_t key_pressed_cnt;
-static uint8_t key_state_cnt;
 static uint8_t key_times;
 uint8_t key_release_falg = 0;  //0释放
 

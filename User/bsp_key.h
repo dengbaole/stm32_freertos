@@ -19,7 +19,7 @@
 
 #define KEY_IN_DEBOUNCE                 (2)
 void key_gpio_config(void);
-uint8_t Key_Scan(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
+void key_handle_10ms(void);
 
 
 #endif /* __KEY_H */

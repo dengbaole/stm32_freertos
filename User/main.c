@@ -4,6 +4,7 @@
 #include "bsp_led.h"
 #include "bsp_usart.h"
 #include "platform.h"
+#include "bsp_key.h"
 
 
 /********************************** 内核对象句柄 *********************************/
@@ -47,9 +48,8 @@ static void BSP_Init(void) {
 
 int main(void) {
 	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
-
 	BSP_Init();
-	printf("动态创建任务!\n");
+	//printf("动态创建任务!\n");
 	/* 创建AppTaskCreate任务 */
 	// xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
 	// 					  (const char*    )"AppTaskCreate",/* 任务名字 */
