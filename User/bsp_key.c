@@ -29,6 +29,9 @@ static void key_execution(uint8_t key_time_cnt) {
 	switch (key_time_cnt) {
 		case 1:
 			printf("Suspend_LEDG_handle\n");
+			// vTaskSuspendAll必须和xTaskResumeAll成对出现
+			// vTaskSuspendAll();/* 挂起调度器 */
+			// xTaskResumeAll();/* 解挂调度器 */
 			//不支持挂起嵌套，没有挂起计数，只需要调用一次就能解挂起
 			vTaskSuspend(LEDG_Task_Handle);/* 挂起LED任务 */
 			printf("Suspend_LEDG_handle!\n");
@@ -36,6 +39,8 @@ static void key_execution(uint8_t key_time_cnt) {
 		case 2:
 			printf("Resume_LEDG_handle\n");
 			vTaskResume(LEDG_Task_Handle);/* 恢复LED任务！ */
+			//中断中需要执行这个函数
+			// xTaskResumeFromISR(LEDG_Task_Handle);
 			printf("Resume_LEDG_handle\n");
 			break;
 		case 3:

@@ -85,9 +85,15 @@ static void ledg_task(void* parameter) {
 static void key_task(void* parameter) {
 	static uint8_t i = 0;
 	static uint8_t key_value = 0;
+
+
+	static portTickType PreviousWakeTime; 
+	const portTickType TimeIncrement = pdMS_TO_TICKS(1000); 
+	PreviousWakeTime = xTaskGetTickCount();
 	while (1) {
 		key_handle_10ms();
-		vTaskDelay(10);/* 延时20个tick */
+		// vTaskDelay(10);/* 延时20个tick */
+		vTaskDelayUntil( &PreviousWakeTime,TimeIncrement );//绝对延时
 	}
 }
 
