@@ -84,7 +84,7 @@ static void ledg_task(void* parameter) {
 
 static void key_task(void* parameter) {
 	static portTickType PreviousWakeTime; 
-	const portTickType TimeIncrement = pdMS_TO_TICKS(1000); 
+	const portTickType TimeIncrement = pdMS_TO_TICKS(10); 
 	PreviousWakeTime = xTaskGetTickCount();
 	while (1) {
 		key_handle_10ms();
