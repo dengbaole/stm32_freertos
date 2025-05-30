@@ -31,17 +31,17 @@ void AppTaskCreate(void* parameter) {
 	// 					  (void*          )NULL,	/* 任务入口函数参数 */
 	// 					  (UBaseType_t    )2,	    /* 任务的优先级 */
 	// 					  (TaskHandle_t*  )&LEDB_Task_Handle);/* 任务控制块指针 */
-	xReturn = xTaskCreate(ledr_task, "ledr_task", 512, NULL, 2, &LEDB_Task_Handle);
+	xReturn = xTaskCreate(ledr_task, "ledr_task", 128, NULL, 2, &LEDB_Task_Handle);
 	if(pdPASS == xReturn) {
 		printf("创建LEDR_Task任务成功!\r\n");
 	}
 
-	xReturn = xTaskCreate(ledg_task, "ledg_task", 512, NULL, 2, &LEDG_Task_Handle);
+	xReturn = xTaskCreate(ledg_task, "ledg_task", 128, NULL, 2, &LEDG_Task_Handle);
 	if(pdPASS == xReturn) {
 		printf("创建LEDG_Task任务成功!\r\n");
 	}
 
-	xReturn = xTaskCreate(key_task, "key_task", 512, NULL, 2, &KEY_Task_Handle);
+	xReturn = xTaskCreate(key_task, "key_task", 128, NULL, 2, &KEY_Task_Handle);
 	if(pdPASS == xReturn) {
 		printf("创建KEY_Task任务成功!\r\n");
 	}

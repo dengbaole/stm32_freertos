@@ -31,7 +31,7 @@
 
 
 
-static void BSP_Init(void) {
+static void platform_init(void) {
 	/*
 	 * STM32中断优先级分组为4，即4bit都用来表示抢占优先级，范围为：0~15
 	 * 优先级分组只需要分组一次即可，以后如果有其他的任务需要用到中断，
@@ -48,7 +48,7 @@ static void BSP_Init(void) {
 
 int main(void) {
 	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
-	BSP_Init();
+	platform_init();
 	//printf("动态创建任务!\n");
 	/* 创建AppTaskCreate任务 */
 	// xReturn = xTaskCreate((TaskFunction_t )AppTaskCreate,  /* 任务入口函数 */
@@ -57,7 +57,7 @@ int main(void) {
 	// 					  (void*          )NULL,/* 任务入口函数参数 */
 	// 					  (UBaseType_t    )1, /* 任务的优先级 */
 	// 					  (TaskHandle_t*  )&AppTaskCreate_Handle);/* 任务控制块指针 */
-	xReturn = xTaskCreate(AppTaskCreate, "AppTaskCreate", 512, NULL, 1, &AppTaskCreate_Handle);
+	xReturn = xTaskCreate(AppTaskCreate, "AppTaskCreate", 128, NULL, 1, &AppTaskCreate_Handle);
 	/* 启动任务调度 */
 	if(pdPASS == xReturn) {
 		vTaskStartScheduler();   /* 启动任务，开启调度 */
