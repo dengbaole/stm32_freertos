@@ -43,11 +43,13 @@ static void key_execution(uint8_t key_time_cnt) {
 			printf("Resume_LEDG_handle\n");
 			break;
 		case 3:
+			queue_send(3);
 			break;
 		case 4:
-
+			queue_send(4);
 			break;
 		case 5:
+			queue_send(5);
 			break;
 		default:
 			break;
