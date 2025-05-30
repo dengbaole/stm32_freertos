@@ -1,6 +1,6 @@
 #include "platform.h"
 #include "bsp_led.h"
-
+#include "bsp_key.h"
 
 
 
@@ -15,15 +15,10 @@ TaskHandle_t AppTaskCreate_Handle = NULL;
 /* LED任务句柄 */
 TaskHandle_t LEDB_Task_Handle = NULL;
 TaskHandle_t LEDG_Task_Handle = NULL;
+TaskHandle_t KEY_Task_Handle = NULL;
 
 
 
-/***********************************************************************
-  * @ 函数名  ： AppTaskCreate
-  * @ 功能说明： 为了方便管理，所有的任务创建函数都放在这个函数里面
-  * @ 参数    ： 无
-  * @ 返回值  ： 无
-  **********************************************************************/
 void AppTaskCreate(void* parameter) {
 	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
 
@@ -46,6 +41,10 @@ void AppTaskCreate(void* parameter) {
 		printf("创建LEDG_Task任务成功!\r\n");
 	}
 
+	xReturn = xTaskCreate(key_task, "key_task", 512, NULL, 2, &KEY_Task_Handle);
+	if(pdPASS == xReturn) {
+		printf("创建KEY_Task任务成功!\r\n");
+	}
 
 	vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
 
@@ -54,21 +53,13 @@ void AppTaskCreate(void* parameter) {
 
 
 
-/**********************************************************************
-  * @ 函数名  ： ledr_task
-  * @ 功能说明： LED_Task任务主体
-  * @ 参数    ：
-  * @ 返回值  ： 无
-  ********************************************************************/
 static void ledr_task(void* parameter) {
 	static uint8_t i = 0;
 	while (1) {
 		i++;
 		LEDR_ON;
-
 		vTaskDelay(500);   /* 延时500个tick */
 		printf("ledr_task Running,LEDB_ON\r\n");
-
 		LEDR_OFF;
 		vTaskDelay(500);   /* 延时500个tick */
 		printf("ledr_task Running,LEDB_OFF\r\n");
@@ -76,24 +67,27 @@ static void ledr_task(void* parameter) {
 }
 
 
-/**********************************************************************
-  * @ 函数名  ： ledr_task
-  * @ 功能说明： LED_Task任务主体
-  * @ 参数    ：
-  * @ 返回值  ： 无
-  ********************************************************************/
 static void ledg_task(void* parameter) {
 	static uint8_t i = 0;
 	while (1) {
 		i++;
 		LEDG_ON;
-
-
 		vTaskDelay(250);   /* 延时500个tick */
-		printf("ledr_task Running,LEDB_ON\r\n");
-
+		printf("ledr_task Running,LEDG_ON\r\n");
 		LEDG_OFF;
 		vTaskDelay(250);   /* 延时500个tick */
-		printf("ledr_task Running,LEDB_OFF\r\n");
+		printf("ledr_task Running,LEDG_OFF\r\n");
 	}
 }
+
+
+
+static void key_task(void* parameter) {
+	static uint8_t i = 0;
+	static uint8_t key_value = 0;
+	while (1) {
+		key_handle_10ms();
+		vTaskDelay(10);/* 延时20个tick */
+	}
+}
+

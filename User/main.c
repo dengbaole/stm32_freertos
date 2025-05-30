@@ -39,6 +39,7 @@ static void BSP_Init(void) {
 	NVIC_PriorityGroupConfig( NVIC_PriorityGroup_4 );
 	LED_GPIO_Config();
 	USART_Config();
+	key_gpio_config();
 }
 
 

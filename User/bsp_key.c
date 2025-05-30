@@ -1,62 +1,89 @@
-/**
-  ******************************************************************************
-  * @file    bsp_key.c
-  * @author  fire
-  * @version V1.0
-  * @date    2018-xx-xx
-  * @brief   °´¼üÓ¦ÓÃbsp£¨É¨ÃèÄ£Ê½£©
-  ******************************************************************************
-  * @attention
-  *
-  * ÊµÑéÆ½Ì¨:Ò°»ğ Ö¸ÄÏÕß STM32 ¿ª·¢°å
-  * ÂÛÌ³    :http://www.firebbs.cn
-  * ÌÔ±¦    :http://firestm32.taobao.com
-  *
-  ******************************************************************************
-  */
 
 #include "bsp_key.h"
 
-/**
-  * @brief  ÅäÖÃ°´¼üÓÃµ½µÄI/O¿Ú
-  * @param  ÎŞ
-  * @retval ÎŞ
-  */
-void Key_GPIO_Config(void) {
+static uint8_t key_execution_countdown;
+static uint8_t key_pressed_cnt;
+static uint8_t key_state_cnt;
+static uint8_t key_times;
+uint8_t key_release_falg = 0;  //0é‡Šæ”¾
+
+
+
+void key_gpio_config(void) {
 	GPIO_InitTypeDef GPIO_InitStructure;
-
-	/*¿ªÆô°´¼ü¶Ë¿ÚµÄÊ±ÖÓ*/
 	RCC_APB2PeriphClockCmd(KEY1_GPIO_CLK | KEY2_GPIO_CLK, ENABLE);
-
-	//Ñ¡Ôñ°´¼üµÄÒı½Å
 	GPIO_InitStructure.GPIO_Pin = KEY1_GPIO_PIN;
-	// ÉèÖÃ°´¼üµÄÒı½ÅÎª¸¡¿ÕÊäÈë
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	//Ê¹ÓÃ½á¹¹Ìå³õÊ¼»¯°´¼ü
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
 	GPIO_Init(KEY1_GPIO_PORT, &GPIO_InitStructure);
-
-	//Ñ¡Ôñ°´¼üµÄÒı½Å
-	GPIO_InitStructure.GPIO_Pin = KEY2_GPIO_PIN;
-	//ÉèÖÃ°´¼üµÄÒı½ÅÎª¸¡¿ÕÊäÈë
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-	//Ê¹ÓÃ½á¹¹Ìå³õÊ¼»¯°´¼ü
-	GPIO_Init(KEY2_GPIO_PORT, &GPIO_InitStructure);
 }
 
-/*
-* º¯ÊıÃû£ºKey_Scan
-* ÃèÊö  £º¼ì²âÊÇ·ñÓĞ°´¼ü°´ÏÂ
-* ÊäÈë  £ºGPIOx£ºx ¿ÉÒÔÊÇ A£¬B£¬C£¬D»òÕß E
-*		     GPIO_Pin£º´ı¶ÁÈ¡µÄ¶Ë¿ÚÎ»
-* Êä³ö  £ºKEY_OFF(Ã»°´ÏÂ°´¼ü)¡¢KEY_ON£¨°´ÏÂ°´¼ü£©
-*/
-uint8_t Key_Scan(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin) {
-	/*¼ì²âÊÇ·ñÓĞ°´¼ü°´ÏÂ */
-	if(GPIO_ReadInputDataBit(GPIOx, GPIO_Pin) == KEY_ON ) {
-		/*µÈ´ı°´¼üÊÍ·Å */
-		while(GPIO_ReadInputDataBit(GPIOx, GPIO_Pin) == KEY_ON);
-		return 	KEY_ON;
-	} else
-		return KEY_OFF;
+
+
+uint8_t is_key_on(void) {
+	return GPIO_ReadInputDataBit(KEY1_GPIO_PORT, KEY1_GPIO_PIN) == KEY_ON;
 }
-/*********************************************END OF FILE**********************/
+
+
+
+static void key_execution(uint8_t key_time_cnt) {
+	switch (key_time_cnt) {
+		case 1:
+			printf("Suspend_LEDG_handle\n");
+			//ä¸æ”¯æŒæŒ‚èµ·åµŒå¥—ï¼Œæ²¡æœ‰æŒ‚èµ·è®¡æ•°ï¼Œåªéœ€è¦è°ƒç”¨ä¸€æ¬¡å°±èƒ½è§£æŒ‚èµ·
+			vTaskSuspend(LEDG_Task_Handle);/* æŒ‚èµ·LEDä»»åŠ¡ */
+			printf("Suspend_LEDG_handle!\n");
+			break;
+		case 2:
+			printf("Resume_LEDG_handle\n");
+			vTaskResume(LEDG_Task_Handle);/* æ¢å¤LEDä»»åŠ¡ï¼ */
+			printf("Resume_LEDG_handle\n");
+			break;
+		case 3:
+			break;
+		case 4:
+
+			break;
+		case 5:
+			break;
+		default:
+			break;
+	}
+	key_times = 0;
+}
+
+void key_handle_10ms(void) {
+	if(is_key_on()) {
+		if(key_pressed_cnt < 250) {
+			key_pressed_cnt++;
+			if(key_pressed_cnt == 200) {
+				// event_push(EVT_BUTTONLONG);
+			}
+		}
+		if(key_pressed_cnt == KEY_IN_DEBOUNCE) {
+			key_release_falg = 5;
+			key_times++;
+			if(key_times >= 5) {
+				key_times = 5;
+			}
+			key_execution_countdown = 50;
+		}
+	} else {
+		key_pressed_cnt = 0;
+		if(key_release_falg > 0) {
+			key_release_falg--;
+		}
+	}
+
+	if(key_execution_countdown > 0) {
+		key_execution_countdown--;
+		if (key_execution_countdown == 0) {
+			key_execution_countdown = 0;
+			key_execution(key_times);
+			key_times = 0;
+		}
+	}
+}
+
+
+
+

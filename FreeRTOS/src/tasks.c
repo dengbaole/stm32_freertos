@@ -183,7 +183,7 @@ state task. */
 		}																								\
 		\
 		/* listGET_OWNER_OF_NEXT_ENTRY indexes through the list, so the tasks of						\
-							the	same priority get an equal share of the processor time. */									\
+										the	same priority get an equal share of the processor time. */									\
 		listGET_OWNER_OF_NEXT_ENTRY( pxCurrentTCB, &( pxReadyTasksLists[ uxTopPriority ] ) );			\
 		uxTopReadyPriority = uxTopPriority;																\
 	} /* taskSELECT_HIGHEST_PRIORITY_TASK */
