@@ -2,6 +2,7 @@
 #include "bsp_led.h"
 #include "bsp_key.h"
 
+
 /********************************** 内核对象句柄 *********************************/
 /*
  * 信号量，消息队列，事件标志组，软件定时器这些都属于内核的对象，要想使用这些内核
@@ -13,7 +14,9 @@
  * 来完成的
  *
  */
-QueueHandle_t Test_Queue = NULL;
+QueueHandle_t Test_Queue = NULL;	/* 用于测试的消息队列 */
+
+SemaphoreHandle_t BinarySem_Handle = NULL; /* 二值信号量句柄 */
 
 /**************************** 任务句柄 ********************************/
 /*
@@ -28,6 +31,14 @@ TaskHandle_t LEDB_Task_Handle = NULL;
 TaskHandle_t LEDG_Task_Handle = NULL;
 TaskHandle_t KEY_Task_Handle = NULL;
 TaskHandle_t RECEIVE_Task_Handle = NULL;
+TaskHandle_t binarysam_task_Handle = NULL;
+
+/******************************* 全局变量声明 ************************************/
+/*
+ * 当我们在写应用程序的时候，可能需要用到一些全局变量。
+ */
+
+
 
 void queue_send(uint8_t key_num) {
 	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
@@ -37,7 +48,14 @@ void queue_send(uint8_t key_num) {
 						  0 );        /* 等待时间 0 */
 }
 
-
+void binarysem_send(void) {
+	BaseType_t xReturn = xSemaphoreGive( BinarySem_Handle );//给出二值信号量
+	if( xReturn == pdTRUE ){
+		printf("BinarySem_Handle二值信号量释放成功!\r\n");
+	} else{
+		printf("BinarySem_Handle二值信号量释放失败!\r\n");
+	}
+}
 
 
 
@@ -52,7 +70,11 @@ void AppTaskCreate(void* parameter) {
 	if(NULL != Test_Queue) {
 		printf("创建Test_Queue消息队列成功!\r\n");
 	}
-
+	/* 创建 BinarySem */
+	BinarySem_Handle = xSemaphoreCreateBinary();
+	if(NULL != BinarySem_Handle) {
+		printf("BinarySem_Handle二值信号量创建成功!\r\n");
+	}
 	// /* 创建LED_Task任务 */
 	// xReturn = xTaskCreate((TaskFunction_t )ledr_task, /* 任务入口函数 */
 	// 					  (const char*    )"ledr_task",/* 任务名字 */
@@ -74,9 +96,13 @@ void AppTaskCreate(void* parameter) {
 	if(pdPASS == xReturn) {
 		printf("创建KEY_Task任务成功!\r\n");
 	}
-	xReturn = xTaskCreate(Receive_Task, "Receive_Task", 128, NULL, 2, &RECEIVE_Task_Handle);
+	xReturn = xTaskCreate(queue_receive_task, "queue_receive_task", 128, NULL, 2, &RECEIVE_Task_Handle);
 	if(pdPASS == xReturn) {
-		printf("创建KEY_Task任务成功!\r\n");
+		printf("创建queue_receive_task任务成功!\r\n");
+	}
+	xReturn = xTaskCreate(binarysam_receive_task, "binarysam_receive_task", 128, NULL, 2, &binarysam_task_Handle);
+	if(pdPASS == xReturn) {
+		printf("创建binarysam_receive_task任务成功!\r\n");
 	}
 
 	vTaskDelete(AppTaskCreate_Handle); //删除AppTaskCreate任务
@@ -126,8 +152,9 @@ static void key_task(void* parameter) {
 	}
 }
 
-
-static void Receive_Task(void* parameter) {
+/// @brief 消息队列接收任务
+/// @param parameter
+static void queue_receive_task(void* parameter) {
 	BaseType_t xReturn = pdTRUE;/* 定义一个创建信息返回值，默认为pdTRUE */
 	uint32_t r_queue;	/* 定义一个接收消息的变量 */
 	while (1) {
@@ -142,3 +169,16 @@ static void Receive_Task(void* parameter) {
 	}
 }
 
+/// @brief 信号量接收任务
+/// @param parameter
+static void binarysam_receive_task(void* parameter) {
+	BaseType_t xReturn = pdPASS;/* 定义一个创建信息返回值，默认为pdPASS */
+	while (1) {
+		//获取二值信号量 xSemaphore,没获取到则一直等待(阻塞不参与任务调度)
+		xReturn = xSemaphoreTake(BinarySem_Handle,/* 二值信号量句柄 */
+								 portMAX_DELAY); /* 等待时间 */
+		if(pdTRUE == xReturn) {
+			printf("BinarySem_Handle二值信号量获取成功!\n\n");
+		}
+	}
+}

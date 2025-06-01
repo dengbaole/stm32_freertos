@@ -46,7 +46,7 @@ static void key_execution(uint8_t key_time_cnt) {
 			queue_send(3);
 			break;
 		case 4:
-			queue_send(4);
+			binarysem_send();
 			break;
 		case 5:
 			queue_send(5);
