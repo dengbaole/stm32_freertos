@@ -50,9 +50,9 @@ void queue_send(uint8_t key_num) {
 
 void binarysem_send(void) {
 	BaseType_t xReturn = xSemaphoreGive( BinarySem_Handle );//给出二值信号量
-	if( xReturn == pdTRUE ){
+	if( xReturn == pdTRUE ) {
 		printf("BinarySem_Handle二值信号量释放成功!\r\n");
-	} else{
+	} else {
 		printf("BinarySem_Handle二值信号量释放失败!\r\n");
 	}
 }
